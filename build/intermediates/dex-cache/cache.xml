@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="4e86306289ace4aa0cfec44a05ed2b410d36989d">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/classes-5a96b4136fca96df269bedb5a6e82d913d905537.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/cardview-v7/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="11842de6a309c447b3a3d60d73ad637a87c58994">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/classes-8dda6fd57adcacdda32421a17773422df66d3a5a.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/libs/internal_impl-22.0.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="b5b92f469d515a13d778900f6d50c03d12f35504">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/internal_impl-22.0.0-458bdc357179e9e2a828b1b1f385a84bb0515cd0.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="d84409890828e07d344a3b9b1da545dba9897b51">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/classes-87eaacd6f01bdcb8d78f8642cf7320249e19331c.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/libs/volley.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c68094cbd011a3f9dccbfe16e77a2cf43622e277">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/volley-47d401b81a1fb6a2df528ff362bb070dea739080.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.6.0/98476622f10715998eacf9240d6b479f12c66143/okio-1.6.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="98476622f10715998eacf9240d6b479f12c66143">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/okio-1.6.0-652e0329c8d83afae5f92dbb4202b392f310f06c.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/android_env/extras/android/m2repository/com/android/support/support-annotations/22.0.0/support-annotations-22.0.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="685d0b2c590447e85284ed84712cb363ba04eff8">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/support-annotations-22.0.0-ebdd9f1a1b9f4c15fad8b44899fd6b7d7fed1fd1.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/support-v13/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="7f9cca1caa023a880b00c382bcc5c90245ae4895">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/classes-3efc31a6c2ce506b374dcf93d20be69ac2315c19.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.1.2/7052283359001bb108753cb0583a887d3bf94c82/okhttp-3.1.2.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="7052283359001bb108753cb0583a887d3bf94c82">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/okhttp-3.1.2-aeb3da5acdaee8a62bc285f63b92e1d9de5ec3b5.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c6d79137693d494dee16372d3921f919eb724ced">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/classes-8331114d05d4ca10a3bb864ca879c55956fc2213.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/palette-v7/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="285506e1cf9d5a66878e2aab3884b3427f8734e9">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/classes-8c51126b0efc7aaaeb181fa0e64252f11e8616d3.jar" />
+    </item>
+    <item
+        jar="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/support-v13/22.0.0/libs/internal_impl-22.0.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="def3eff2b7b4774d96ae15b07b3fc0111edbfe24">
+        <dex dex="/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/pre-dexed/debug/internal_impl-22.0.0-d58b4f7960fb6545cb9531ee8dd73b4b7e804420.jar" />
+    </item>
+
+</items>
