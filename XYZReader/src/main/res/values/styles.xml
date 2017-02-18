@@ -22,4 +22,24 @@
         <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">@color/blue_dark</item>
     </style>
+
+    <style name="ApplicationTheme.ToolbarColoredBackArrow">
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:ellipsize">none</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
 </resources>
