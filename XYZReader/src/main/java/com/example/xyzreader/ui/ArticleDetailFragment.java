@@ -156,15 +156,26 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            bylineView.setText(Html.fromHtml(
-                DateUtils.getRelativeTimeSpanString(
-                    mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-                    System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_ALL).toString()
-                    + " by <font color='#ffffff'>"
-                    + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                    + "</font>"));
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+
+            String relativeTimeSpanString =  DateUtils.getRelativeTimeSpanString(
+                mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_ALL).toString()
+                + " by <font color='#ffffff'>"
+                + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                + "</font>";
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                bylineView.setText(Html.fromHtml(relativeTimeSpanString, Html.FROM_HTML_MODE_LEGACY));
+            }else{
+                bylineView.setText(Html.fromHtml(relativeTimeSpanString));
+            }
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY), Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+            }
 
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                 .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
@@ -182,6 +193,7 @@ public class ArticleDetailFragment extends Fragment implements
                     }
                 });
         } else {
+            //FIXME something happening which makes page go blank
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A");

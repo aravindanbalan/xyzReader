@@ -1518,12 +1518,10 @@
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">normal</item>
     </style>
     <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:ellipsize">none</item>
