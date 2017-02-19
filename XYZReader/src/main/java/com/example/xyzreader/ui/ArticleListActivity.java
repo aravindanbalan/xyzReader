@@ -23,6 +23,7 @@ import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
+import com.example.xyzreader.widgets.DynamicHeightNetworkImageView;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
@@ -54,6 +55,10 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
+
+        if (savedInstanceState == null) {
+            refresh();
+        }
     }
 
     private void refresh() {
@@ -71,12 +76,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     protected void onStop() {
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refresh();
     }
 
     private boolean mIsRefreshing = false;

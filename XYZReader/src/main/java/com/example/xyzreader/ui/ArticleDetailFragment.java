@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -43,6 +44,7 @@ public class ArticleDetailFragment extends Fragment implements
     private View mRootView;
     private boolean mIsCard = false;
     private ImageView mHeaderImageView;
+    private CollapsingToolbarLayout mCollapsingToolbar;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -101,34 +103,16 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+        mCollapsingToolbar  = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar);
 
-        AppBarLayout appBarLayout = (AppBarLayout) mRootView.findViewById(R.id.app_bar_layout);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            int scrollRange = -1;
-
+        FloatingActionButton fab = (FloatingActionButton) mRootView.findViewById(R.id.share_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    //collapsed mode
-                    if (mCursor != null) {
-                        collapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
-                    } else {
-                        collapsingToolbarLayout.setTitle(getString(R.string.app_name));
-                    }
-                } else {
-                    //expanded mode
-                    if (mCursor != null) {
-                        collapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
-                    } else {
-                        collapsingToolbarLayout.setTitle(getString(R.string.app_name));
-                    }
-                }
+            public void onClick(View view) {
+                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                    .setType("text/plain")
+                    .setText("Some sample text")
+                    .getIntent(), getString(R.string.action_share)));
             }
         });
 
@@ -145,37 +129,31 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
-            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+            mCollapsingToolbar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
 
-            String relativeTimeSpanString =  DateUtils.getRelativeTimeSpanString(
-                mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-                System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_ALL).toString()
-                + " by <font color='#ffffff'>"
-                + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                + "</font>";
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                bylineView.setText(Html.fromHtml(relativeTimeSpanString, Html.FROM_HTML_MODE_LEGACY));
-            }else{
-                bylineView.setText(Html.fromHtml(relativeTimeSpanString));
-            }
+            String subtitle = String.format(
+                getString(R.string.author_line),
+                DateUtils.getRelativeTimeSpanString(
+                    mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                    System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                    DateUtils.FORMAT_ABBREV_ALL).toString(),
+                mCursor.getString(ArticleLoader.Query.AUTHOR));
+            bylineView.setText(subtitle);
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY), Html.FROM_HTML_MODE_LEGACY));
             } else {
                 bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
             }
+            bodyView.setMovementMethod(LinkMovementMethod.getInstance());
 
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                 .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
@@ -192,12 +170,6 @@ public class ArticleDetailFragment extends Fragment implements
 
                     }
                 });
-        } else {
-            //FIXME something happening which makes page go blank
-            mRootView.setVisibility(View.GONE);
-            titleView.setText("N/A");
-            bylineView.setText("N/A");
-            bodyView.setText("N/A");
         }
     }
 

@@ -11,7 +11,7 @@
         android:foreground="?selectableItemBackground">
 
     <!--suppress AndroidLintContentDescription -->
-    <com.example.xyzreader.ui.DynamicHeightNetworkImageView
+    <com.example.xyzreader.widgets.DynamicHeightNetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:ellipsize="end"
-                android:maxLines="1"/>
+                android:maxLines="2"/>
 
         <TextView
                 android:id="@+id/article_subtitle"

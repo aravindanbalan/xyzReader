@@ -20,6 +20,11 @@
     <color name="abc_search_url_text_normal">#7fa87f</color>
     <color name="abc_search_url_text_pressed">@android:color/black</color>
     <color name="abc_search_url_text_selected">@android:color/black</color>
+    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="accent_blue">#3D5AFE</color>
+    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/res/values/values.xml -->
+    <eat-comment/>
     <color name="accent_material_dark">@color/material_deep_teal_200</color>
     <color name="accent_material_light">@color/material_deep_teal_500</color>
     <color name="background_floating_material_dark">@color/material_grey_800</color>
@@ -167,7 +172,6 @@
     <declare-styleable name="CoordinatorLayout"><attr format="reference" name="keylines"/><attr format="reference" name="statusBarBackground"/></declare-styleable>
     <declare-styleable name="CoordinatorLayout_Layout"><attr name="android:layout_gravity"/><attr format="string" name="layout_behavior"/><attr format="reference" name="layout_anchor"/><attr format="integer" name="layout_keyline"/><attr name="layout_anchorGravity"><flag name="top" value="0x30"/><flag name="bottom" value="0x50"/><flag name="left" value="0x03"/><flag name="right" value="0x05"/><flag name="center_vertical" value="0x10"/><flag name="fill_vertical" value="0x70"/><flag name="center_horizontal" value="0x01"/><flag name="fill_horizontal" value="0x07"/><flag name="center" value="0x11"/><flag name="fill" value="0x77"/><flag name="clip_vertical" value="0x80"/><flag name="clip_horizontal" value="0x08"/><flag name="start" value="0x00800003"/><flag name="end" value="0x00800005"/></attr><attr format="enum" name="layout_insetEdge"><enum name="none" value="0x0"/><enum name="top" value="0x30"/><enum name="bottom" value="0x50"/><enum name="left" value="0x03"/><enum name="right" value="0x03"/><enum name="start" value="0x00800003"/><enum name="end" value="0x00800005"/></attr><attr name="layout_dodgeInsetEdges"><flag name="none" value="0x0"/><flag name="top" value="0x30"/><flag name="bottom" value="0x50"/><flag name="left" value="0x03"/><flag name="right" value="0x03"/><flag name="start" value="0x00800003"/><flag name="end" value="0x00800005"/><flag name="all" value="0x77"/></attr></declare-styleable>
     <declare-styleable name="DesignTheme"><attr format="reference" name="bottomSheetDialogTheme"/><attr format="reference" name="bottomSheetStyle"/><attr format="color" name="textColorError"/></declare-styleable>
-    <declare-styleable name="DrawInsetsFrameLayout"><attr format="color|reference" name="insetBackground"/></declare-styleable>
     <declare-styleable name="DrawerArrowToggle"><attr format="color" name="color"/><attr format="boolean" name="spinBars"/><attr format="dimension" name="drawableSize"/><attr format="dimension" name="gapBetweenBars"/><attr format="dimension" name="arrowHeadLength"/><attr format="dimension" name="arrowShaftLength"/><attr format="dimension" name="barLength"/><attr format="dimension" name="thickness"/></declare-styleable>
     <declare-styleable name="FloatingActionButton"><attr name="backgroundTint"/><attr name="backgroundTintMode"/><attr format="color" name="rippleColor"/><attr name="fabSize"><enum name="auto" value="-1"/><enum name="normal" value="0"/><enum name="mini" value="1"/></attr><attr name="elevation"/><attr format="dimension" name="pressedTranslationZ"/><attr format="dimension" name="borderWidth"/><attr format="boolean" name="useCompatPadding"/></declare-styleable>
     <declare-styleable name="FloatingActionButton_Behavior_Layout"><attr format="boolean" name="behavior_autoHide"/></declare-styleable>
@@ -270,6 +274,9 @@
     <dimen name="abc_text_size_subtitle_material_toolbar">16dp</dimen>
     <dimen name="abc_text_size_title_material">20sp</dimen>
     <dimen name="abc_text_size_title_material_toolbar">20dp</dimen>
+    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="app_bar_height">256dp</dimen>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/cardview-v7/24.2.1/res/values/values.xml -->
     <eat-comment/>
     <dimen name="cardview_compat_inset_shadow">1dp</dimen>
@@ -402,7 +409,7 @@
     <integer name="design_snackbar_text_max_lines">2</integer>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/macro_layout.xml -->
     <eat-comment/>
-    <integer name="list_column_count">2</integer>
+    <integer name="list_column_count">1</integer>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/res/values/values.xml -->
     <eat-comment/>
     <integer name="status_bar_notification_info_maxnum">999</integer>
@@ -446,6 +453,11 @@
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/design/24.2.1/res/values/values.xml -->
     <eat-comment/>
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="author_line">%1$s by %2$s</string>
+    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/design/24.2.1/res/values/values.xml -->
+    <eat-comment/>
     <string name="bottom_sheet_behavior" translatable="false">android.support.design.widget.BottomSheetBehavior</string>
     <string name="character_counter_pattern" translatable="false">%1$d / %2$d</string>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/res/values/values.xml -->
@@ -474,6 +486,7 @@
         <item name="colorPrimary">@color/blue_light</item>
         <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">@color/blue_dark</item>
+        <item name="colorAccent">@color/accent_blue</item>
     </style>
     <style name="ApplicationTheme.ToolbarColoredBackArrow">
         <item name="android:textColorSecondary">@color/white</item>
@@ -1514,18 +1527,6 @@
     </style>
     <style name="CardView.Light">
         <item name="cardBackgroundColor">@color/cardview_light_background</item>
-    </style>
-    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/styles.xml -->
-    <eat-comment/>
-    <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">normal</item>
-    </style>
-    <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:ellipsize">none</item>
-        <item name="android:maxLines">2</item>
     </style>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/res/values/values.xml -->
     <eat-comment/>
