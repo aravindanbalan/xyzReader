@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v13.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -149,7 +150,7 @@ public class ArticleListActivity extends AppCompatActivity implements
                 public void onClick(View view) {
                     //TODO Not sure why its not working properly. Need help here to understand whats happening.
                     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity(), vh.thumbnailView, vh.thumbnailView.getTransitionName()).toBundle();
+                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity(), vh.thumbnailView, vh.thumbnailView.getTransitionName() + getItemId(vh.getAdapterPosition())).toBundle();
                         startActivity(new Intent(Intent.ACTION_VIEW,
                             ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))), bundle);
                     }else {
@@ -175,6 +176,7 @@ public class ArticleListActivity extends AppCompatActivity implements
                     + mCursor.getString(ArticleLoader.Query.AUTHOR));
             holder.subtitleView.setTypeface(roboto_regular);
 
+            ViewCompat.setTransitionName(holder.thumbnailView, getString(R.string.transition_photo) + getItemId(position));
             holder.thumbnailView.setImageUrl(
                 mCursor.getString(ArticleLoader.Query.THUMB_URL),
                 ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());

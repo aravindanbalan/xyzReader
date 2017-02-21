@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v13.view.ViewCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -95,6 +96,7 @@ public class ArticleDetailFragment extends Fragment implements
         }
 
         mHeaderImageView = (ImageView) mRootView.findViewById(R.id.header_image);
+        ViewCompat.setTransitionName(mHeaderImageView, getString(R.string.transition_photo) + mItemId);
 
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override

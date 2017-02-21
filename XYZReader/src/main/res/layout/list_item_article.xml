@@ -14,8 +14,7 @@
     <com.example.xyzreader.widgets.DynamicHeightNetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:transitionName="@string/transition_photo"/>
+            android:layout_height="match_parent"/>
 
     <!--image scrim -->
     <View android:layout_width="match_parent"
