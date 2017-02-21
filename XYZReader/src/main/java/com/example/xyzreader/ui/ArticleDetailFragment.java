@@ -48,7 +48,6 @@ public class ArticleDetailFragment extends Fragment implements
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
-    private boolean mIsCard = false;
     private ImageView mHeaderImageView;
     private CollapsingToolbarLayout mCollapsingToolbar;
     private Typeface roboto_regular;
@@ -95,8 +94,6 @@ public class ArticleDetailFragment extends Fragment implements
         mItemId = getArguments().getLong(ARG_ITEM_ID);
         mStartingPosition = getArguments().getInt(ARG_STARTING_ALBUM_IMAGE_POSITION);
         mAlbumPosition = getArguments().getInt(ARG_ALBUM_IMAGE_POSITION);
-
-        mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         setHasOptionsMenu(true);
     }
 

@@ -278,7 +278,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             intent.putExtra(EXTRA_STARTING_ALBUM_POSITION, mPosition);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this, thumbnailView, thumbnailView.getTransitionName() + getItemId()).toBundle();
+                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this, thumbnailView, thumbnailView.getTransitionName() + mPosition).toBundle();
                 startActivity(intent, bundle);
             } else {
                 startActivity(intent);
