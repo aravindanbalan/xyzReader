@@ -30,7 +30,7 @@ import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
-import com.example.xyzreader.widgets.DynamicHeightNetworkImageView;
+import com.example.xyzreader.widgets.ScaledImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -149,9 +149,9 @@ public class ArticleListActivity extends AppCompatActivity implements
         if (startingPosition != currentPosition) {
             mRecyclerView.scrollToPosition(currentPosition);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            postponeEnterTransition();
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            postponeEnterTransition();
+//        }
         mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -235,14 +235,14 @@ public class ArticleListActivity extends AppCompatActivity implements
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private DynamicHeightNetworkImageView thumbnailView;
+        private ScaledImageView thumbnailView;
         private TextView titleView;
         private TextView subtitleView;
         private int mPosition;
 
         ViewHolder(View view) {
             super(view);
-            thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
+            thumbnailView = (ScaledImageView) view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
             itemView.setOnClickListener(this);

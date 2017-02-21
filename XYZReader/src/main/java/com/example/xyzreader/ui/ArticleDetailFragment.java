@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.example.xyzreader.widgets.ScaledImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -48,7 +49,7 @@ public class ArticleDetailFragment extends Fragment implements
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
-    private ImageView mHeaderImageView;
+    private ScaledImageView mHeaderImageView;
     private CollapsingToolbarLayout mCollapsingToolbar;
     private Typeface roboto_regular;
     private Typeface roboto_bold;
@@ -114,7 +115,7 @@ public class ArticleDetailFragment extends Fragment implements
             getCurrentActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mHeaderImageView = (ImageView) mRootView.findViewById(R.id.header_image);
+        mHeaderImageView = (ScaledImageView) mRootView.findViewById(R.id.header_image);
         ViewCompat.setTransitionName(mHeaderImageView, getString(R.string.transition_photo) + mAlbumPosition);
 
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
@@ -206,6 +207,7 @@ public class ArticleDetailFragment extends Fragment implements
             String url = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
             RequestCreator albumImageRequest = Picasso.with(getActivity()).load(url);
             albumImageRequest.into(mHeaderImageView, mImageCallback);
+            mHeaderImageView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         }
     }
 
