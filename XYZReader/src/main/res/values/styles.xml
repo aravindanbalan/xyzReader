@@ -22,6 +22,9 @@
         <!-- colorPrimaryDark is used for the status bar -->
         <item name="colorPrimaryDark">@color/blue_dark</item>
         <item name="colorAccent">@color/accent_blue</item>
+
+        <item name="android:windowEnterTransition">@transition/details_window_enter_transition</item>
+        <item name="android:windowReturnTransition">@transition/details_window_return_transition</item>
     </style>
 
     <style name="ToolbarColoredBackArrow" parent="ApplicationTheme">

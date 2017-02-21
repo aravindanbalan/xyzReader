@@ -273,7 +273,6 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         @Override
         public void onClick(View view) {
-            //TODO Not sure why its not working properly. Need help here to understand whats happening.
             Intent intent = new Intent(Intent.ACTION_VIEW,
                 ItemsContract.Items.buildItemUri(getItemId()));
             intent.putExtra(EXTRA_STARTING_ALBUM_POSITION, mPosition);

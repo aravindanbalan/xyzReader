@@ -70,7 +70,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +97,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
-        //TODO CHECK this
         mPager.setCurrentItem(mCurrentPosition);
         mPager.setPageMargin((int) TypedValue
             .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
