@@ -165,7 +165,6 @@ public class ArticleListActivity extends AppCompatActivity implements
         });
     }
 
-
     private boolean mIsRefreshing = false;
 
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
@@ -220,49 +219,13 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            final ViewHolder vh = new ViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO Not sure why its not working properly. Need help here to understand whats happening.
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                        ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition())));
-                    intent.putExtra(EXTRA_STARTING_ALBUM_POSITION, mPosition);
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this, vh.thumbnailView, vh.thumbnailView.getTransitionName() + getItemId(vh.getAdapterPosition())).toBundle();
-                        startActivity(intent, bundle);
-                    } else {
-                        startActivity(intent);
-                    }
-                }
-            });
-            return vh;
+           return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             mCursor.moveToPosition(position);
-            holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            holder.titleView.setTypeface(roboto_medium);
-            holder.subtitleView.setText(
-                DateUtils.getRelativeTimeSpanString(
-                    mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-                    System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_ALL).toString()
-                    + " by "
-                    + mCursor.getString(ArticleLoader.Query.AUTHOR));
-            holder.subtitleView.setTypeface(roboto_regular);
-
-            String transition_string = getString(R.string.transition_photo) + position;
-            holder.thumbnailView.setTag(transition_string);
-            ViewCompat.setTransitionName(holder.thumbnailView, transition_string);
-
-            RequestCreator albumImageRequest = Picasso.with(getApplicationContext()).load(mCursor.getString(ArticleLoader.Query.THUMB_URL));
-            albumImageRequest.into(holder.thumbnailView);
-
-            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-            mPosition = position;
+            holder.bind(position, mCursor);
         }
 
         @Override
@@ -271,16 +234,56 @@ public class ArticleListActivity extends AppCompatActivity implements
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private DynamicHeightNetworkImageView thumbnailView;
         private TextView titleView;
         private TextView subtitleView;
+        private int mPosition;
 
         ViewHolder(View view) {
             super(view);
             thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+            itemView.setOnClickListener(this);
+        }
+
+        public void bind(int position, Cursor cursor) {
+            titleView.setText(cursor.getString(ArticleLoader.Query.TITLE));
+            titleView.setTypeface(roboto_medium);
+            subtitleView.setText(
+                DateUtils.getRelativeTimeSpanString(
+                    cursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                    System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                    DateUtils.FORMAT_ABBREV_ALL).toString()
+                    + " by "
+                    + cursor.getString(ArticleLoader.Query.AUTHOR));
+            subtitleView.setTypeface(roboto_regular);
+
+            String transition_string = getString(R.string.transition_photo) + position;
+            thumbnailView.setTag(transition_string);
+            ViewCompat.setTransitionName(thumbnailView, transition_string);
+
+            RequestCreator albumImageRequest = Picasso.with(getApplicationContext()).load(cursor.getString(ArticleLoader.Query.THUMB_URL));
+            albumImageRequest.into(thumbnailView);
+
+            thumbnailView.setAspectRatio(cursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+            mPosition = position;
+        }
+
+        @Override
+        public void onClick(View view) {
+            //TODO Not sure why its not working properly. Need help here to understand whats happening.
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                ItemsContract.Items.buildItemUri(getItemId()));
+            intent.putExtra(EXTRA_STARTING_ALBUM_POSITION, mPosition);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this, thumbnailView, thumbnailView.getTransitionName() + getItemId()).toBundle();
+                startActivity(intent, bundle);
+            } else {
+                startActivity(intent);
+            }
         }
     }
 }
