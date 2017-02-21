@@ -1,8 +1,9 @@
 package com.example.xyzreader.ui;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.app.LoaderManager;
+import android.app.SharedElementCallback;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.example.xyzreader.R;
@@ -29,6 +31,11 @@ import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
 import com.example.xyzreader.widgets.DynamicHeightNetworkImageView;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
@@ -46,10 +53,56 @@ public class ArticleListActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private final int TRIGGER_DISTANCE_IN_DP = 120;  // the distance to trigger a sync in a SwipeRefreshLayout
 
+    static final String EXTRA_STARTING_ALBUM_POSITION = "extra_starting_item_position";
+    static final String EXTRA_CURRENT_ALBUM_POSITION = "extra_current_item_position";
+    private Bundle mTmpReenterState;
+
+    @SuppressLint("NewApi")
+    private final SharedElementCallback mCallback = new SharedElementCallback() {
+        @Override
+        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+            if (mTmpReenterState != null) {
+                int startingPosition = mTmpReenterState.getInt(EXTRA_STARTING_ALBUM_POSITION);
+                int currentPosition = mTmpReenterState.getInt(EXTRA_CURRENT_ALBUM_POSITION);
+                if (startingPosition != currentPosition) {
+                    // If startingPosition != currentPosition the user must have swiped to a
+                    // different page in the DetailsActivity. We must update the shared element
+                    // so that the correct one falls into place.
+                    String newTransitionName = getString(R.string.transition_photo) + currentPosition;
+                    View newSharedElement = mRecyclerView.findViewWithTag(newTransitionName);
+                    if (newSharedElement != null) {
+                        names.clear();
+                        names.add(newTransitionName);
+                        sharedElements.clear();
+                        sharedElements.put(newTransitionName, newSharedElement);
+                    }
+                }
+
+                mTmpReenterState = null;
+            } else {
+                // If mTmpReenterState is null, then the activity is exiting.
+                View navigationBar = findViewById(android.R.id.navigationBarBackground);
+                View statusBar = findViewById(android.R.id.statusBarBackground);
+                if (navigationBar != null) {
+                    names.add(navigationBar.getTransitionName());
+                    sharedElements.put(navigationBar.getTransitionName(), navigationBar);
+                }
+                if (statusBar != null) {
+                    names.add(statusBar.getTransitionName());
+                    sharedElements.put(statusBar.getTransitionName(), statusBar);
+                }
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setExitSharedElementCallback(mCallback);
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
@@ -86,6 +139,32 @@ public class ArticleListActivity extends AppCompatActivity implements
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
     }
+
+    @Override
+    public void onActivityReenter(int requestCode, Intent data) {
+        super.onActivityReenter(requestCode, data);
+        mTmpReenterState = new Bundle(data.getExtras());
+        int startingPosition = mTmpReenterState.getInt(EXTRA_STARTING_ALBUM_POSITION);
+        int currentPosition = mTmpReenterState.getInt(EXTRA_CURRENT_ALBUM_POSITION);
+        if (startingPosition != currentPosition) {
+            mRecyclerView.scrollToPosition(currentPosition);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            postponeEnterTransition();
+        }
+        mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                mRecyclerView.requestLayout();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startPostponedEnterTransition();
+                }
+                return true;
+            }
+        });
+    }
+
 
     private boolean mIsRefreshing = false;
 
@@ -124,12 +203,9 @@ public class ArticleListActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(null);
     }
 
-    public Activity getActivity(){
-        return this;
-    }
-
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
+        private int mPosition;
 
         public Adapter(Cursor cursor) {
             mCursor = cursor;
@@ -149,13 +225,15 @@ public class ArticleListActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view) {
                     //TODO Not sure why its not working properly. Need help here to understand whats happening.
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(getActivity(), vh.thumbnailView, vh.thumbnailView.getTransitionName() + getItemId(vh.getAdapterPosition())).toBundle();
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))), bundle);
-                    }else {
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                        ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition())));
+                    intent.putExtra(EXTRA_STARTING_ALBUM_POSITION, mPosition);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this, vh.thumbnailView, vh.thumbnailView.getTransitionName() + getItemId(vh.getAdapterPosition())).toBundle();
+                        startActivity(intent, bundle);
+                    } else {
+                        startActivity(intent);
                     }
                 }
             });
@@ -176,11 +254,15 @@ public class ArticleListActivity extends AppCompatActivity implements
                     + mCursor.getString(ArticleLoader.Query.AUTHOR));
             holder.subtitleView.setTypeface(roboto_regular);
 
-            ViewCompat.setTransitionName(holder.thumbnailView, getString(R.string.transition_photo) + getItemId(position));
-            holder.thumbnailView.setImageUrl(
-                mCursor.getString(ArticleLoader.Query.THUMB_URL),
-                ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+            String transition_string = getString(R.string.transition_photo) + position;
+            holder.thumbnailView.setTag(transition_string);
+            ViewCompat.setTransitionName(holder.thumbnailView, transition_string);
+
+            RequestCreator albumImageRequest = Picasso.with(getApplicationContext()).load(mCursor.getString(ArticleLoader.Query.THUMB_URL));
+            albumImageRequest.into(holder.thumbnailView);
+
             holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+            mPosition = position;
         }
 
         @Override
