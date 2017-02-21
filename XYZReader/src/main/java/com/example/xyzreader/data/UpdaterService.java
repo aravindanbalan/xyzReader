@@ -12,6 +12,7 @@ import android.os.RemoteException;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.example.xyzreader.R;
 import com.example.xyzreader.remote.RemoteEndpointUtil;
 
 import org.json.JSONArray;
@@ -27,6 +28,10 @@ public class UpdaterService extends IntentService {
             = "com.example.xyzreader.intent.action.STATE_CHANGE";
     public static final String EXTRA_REFRESHING
             = "com.example.xyzreader.intent.extra.REFRESHING";
+    public static final String BROADCAST_ACTION_STATE_ERROR
+        = "com.example.xyzreader.intent.action.STATE_ERROR";
+    public static final String EXTRA_ERROR
+        = "com.example.xyzreader.intent.extra.ERROR";
 
     public UpdaterService() {
         super(TAG);
@@ -40,11 +45,11 @@ public class UpdaterService extends IntentService {
         NetworkInfo ni = cm.getActiveNetworkInfo();
         if (ni == null || !ni.isConnected()) {
             Log.w(TAG, "Not online, not refreshing.");
+            sendBroadcast(new Intent(BROADCAST_ACTION_STATE_ERROR).putExtra(EXTRA_ERROR, getString(R.string.no_internet_connection)));
             return;
         }
 
-        sendBroadcast(
-                new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));
+        sendBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));
 
         // Don't even inspect the intent, we only do one thing, and that's fetch content.
         ArrayList<ContentProviderOperation> cpo = new ArrayList<ContentProviderOperation>();
@@ -57,6 +62,7 @@ public class UpdaterService extends IntentService {
         try {
             JSONArray array = RemoteEndpointUtil.fetchJsonArray();
             if (array == null) {
+                sendBroadcast(new Intent(BROADCAST_ACTION_STATE_ERROR).putExtra(EXTRA_ERROR, getString(R.string.something_went_wrong)));
                 throw new JSONException("Invalid parsed item array" );
             }
 
@@ -79,9 +85,9 @@ public class UpdaterService extends IntentService {
 
         } catch (JSONException | RemoteException | OperationApplicationException e) {
             Log.e(TAG, "Error updating content.", e);
+            sendBroadcast(new Intent(BROADCAST_ACTION_STATE_ERROR).putExtra(EXTRA_ERROR, getString(R.string.something_went_wrong)));
         }
 
-        sendBroadcast(
-                new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
+        sendBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
     }
 }
