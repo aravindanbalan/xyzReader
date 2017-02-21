@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values-sw600dp-land/dimens.xml -->
+    <eat-comment/>
+    <dimen name="app_bar_height">350dp</dimen>
+    <dimen name="card_view_tablet_margin_end">100dp</dimen>
+    <dimen name="card_view_tablet_margin_start">100dp</dimen>
+    <dimen name="card_view_tablet_margin_top">24dp</dimen>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values-sw600dp-land/macro_layout.xml -->
     <eat-comment/>
-    <bool name="detail_is_card">true</bool>
-    <dimen name="detail_card_top_margin">256dp</dimen>
     <dimen name="detail_photo_height">600dp</dimen>
+    <dimen name="expanded_margin_bottom">120dp</dimen>
+    <integer name="list_column_count">3</integer>
 </resources>
