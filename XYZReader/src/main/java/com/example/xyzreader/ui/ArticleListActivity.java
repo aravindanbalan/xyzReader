@@ -13,6 +13,8 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v13.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +48,7 @@ import java.util.Map;
 public class ArticleListActivity extends AppCompatActivity implements
     LoaderManager.LoaderCallbacks<Cursor> {
 
+    private CoordinatorLayout mCoordinatorLayout;
     private Typeface roboto_regular;
     private Typeface roboto_medium;
     private Toolbar mToolbar;
@@ -105,6 +108,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         if (null != mSwipeRefreshLayout) {
             mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.blue_dark, R.color.green);
@@ -173,6 +177,12 @@ public class ArticleListActivity extends AppCompatActivity implements
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 updateRefreshingUI();
+            } else if(UpdaterService.BROADCAST_ACTION_STATE_ERROR.equals(intent.getAction())){
+
+                String errorString = intent.getStringExtra(UpdaterService.EXTRA_ERROR);
+                Snackbar snackbar = Snackbar
+                    .make(mCoordinatorLayout, errorString, Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         }
     };
@@ -204,7 +214,6 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
-        private int mPosition;
 
         public Adapter(Cursor cursor) {
             mCursor = cursor;

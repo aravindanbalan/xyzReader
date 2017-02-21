@@ -12,4 +12,7 @@
     <string name ="author_line">%1$s by %2$s</string>
     <string name="transition_photo">transition_photo</string>
 
+    <string name="something_went_wrong">Something went wrong on our end. Please check back again Later.</string>
+    <string name="no_internet_connection">Not connected to the Network. Please check back again.</string>
+
 </resources>
