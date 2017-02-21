@@ -340,6 +340,9 @@
     <eat-comment/>
     <item format="float" name="disabled_alpha_material_dark" type="dimen">0.30</item>
     <item format="float" name="disabled_alpha_material_light" type="dimen">0.26</item>
+    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/macro_layout.xml -->
+    <eat-comment/>
+    <dimen name="expanded_margin_bottom">50dp</dimen>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="fab_elevation">2dp</dimen>
@@ -466,6 +469,7 @@
     <string name="status_bar_notification_info_overflow">999+</string>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string name="transition_photo">transition_photo</string>
     <string name="up">Up</string>
     <string name="welcome_xyz_reader">Welcome to XYZ Reader!</string>
     <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/res/values/values.xml -->

@@ -14,7 +14,8 @@
     <com.example.xyzreader.widgets.DynamicHeightNetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:transitionName="@string/transition_photo"/>
 
     <!--image scrim -->
     <View android:layout_width="match_parent"
@@ -29,7 +30,6 @@
                   android:layout_gravity="bottom">
         <TextView
                 android:id="@+id/article_title"
-                style="@style/TextAppearance.AppCompat.Subhead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
@@ -38,7 +38,6 @@
 
         <TextView
                 android:id="@+id/article_subtitle"
-                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"

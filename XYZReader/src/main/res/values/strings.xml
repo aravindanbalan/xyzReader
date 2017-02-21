@@ -10,6 +10,6 @@
     <string name="up">Up</string>
 
     <string name ="author_line">%1$s by %2$s</string>
-
+    <string name="transition_photo">transition_photo</string>
 
 </resources>

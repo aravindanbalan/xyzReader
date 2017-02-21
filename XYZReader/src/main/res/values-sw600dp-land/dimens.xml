@@ -3,4 +3,5 @@
     <dimen name="card_view_tablet_margin_top">24dp</dimen>
     <dimen name="card_view_tablet_margin_end">100dp</dimen>
     <dimen name="card_view_tablet_margin_start">100dp</dimen>
+    <dimen name="app_bar_height">350dp</dimen>
 </resources>

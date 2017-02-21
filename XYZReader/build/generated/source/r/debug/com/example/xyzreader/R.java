@@ -2572,9 +2572,9 @@ containing a value of this type.
         public static final int abc_text_size_title_material=0x7f080046;
         public static final int abc_text_size_title_material_toolbar=0x7f080047;
         public static final int app_bar_height=0x7f080048;
-        public static final int card_view_tablet_margin_end=0x7f08008a;
-        public static final int card_view_tablet_margin_start=0x7f08008b;
-        public static final int card_view_tablet_margin_top=0x7f08008c;
+        public static final int card_view_tablet_margin_end=0x7f08008b;
+        public static final int card_view_tablet_margin_start=0x7f08008c;
+        public static final int card_view_tablet_margin_top=0x7f08008d;
         public static final int cardview_compat_inset_shadow=0x7f080049;
         public static final int cardview_default_elevation=0x7f08004a;
         public static final int cardview_default_radius=0x7f08004b;
@@ -2624,22 +2624,23 @@ containing a value of this type.
         public static final int detail_title_text_size=0x7f080077;
         public static final int disabled_alpha_material_dark=0x7f080078;
         public static final int disabled_alpha_material_light=0x7f080079;
-        public static final int fab_elevation=0x7f08007a;
-        public static final int fab_margin=0x7f08007b;
-        public static final int fab_press_translation_z=0x7f08007c;
-        public static final int highlight_alpha_material_colored=0x7f08007d;
-        public static final int highlight_alpha_material_dark=0x7f08007e;
-        public static final int highlight_alpha_material_light=0x7f08007f;
-        public static final int item_touch_helper_max_drag_scroll_per_frame=0x7f080080;
-        public static final int item_touch_helper_swipe_escape_max_velocity=0x7f080081;
-        public static final int item_touch_helper_swipe_escape_velocity=0x7f080082;
-        public static final int list_side_margin=0x7f080083;
-        public static final int list_toolbar_side_margin=0x7f080084;
-        public static final int notification_large_icon_height=0x7f080085;
-        public static final int notification_large_icon_width=0x7f080086;
-        public static final int notification_subtext_size=0x7f080087;
-        public static final int paddingBottom=0x7f080088;
-        public static final int paddingTop=0x7f080089;
+        public static final int expanded_margin_bottom=0x7f08007a;
+        public static final int fab_elevation=0x7f08007b;
+        public static final int fab_margin=0x7f08007c;
+        public static final int fab_press_translation_z=0x7f08007d;
+        public static final int highlight_alpha_material_colored=0x7f08007e;
+        public static final int highlight_alpha_material_dark=0x7f08007f;
+        public static final int highlight_alpha_material_light=0x7f080080;
+        public static final int item_touch_helper_max_drag_scroll_per_frame=0x7f080081;
+        public static final int item_touch_helper_swipe_escape_max_velocity=0x7f080082;
+        public static final int item_touch_helper_swipe_escape_velocity=0x7f080083;
+        public static final int list_side_margin=0x7f080084;
+        public static final int list_toolbar_side_margin=0x7f080085;
+        public static final int notification_large_icon_height=0x7f080086;
+        public static final int notification_large_icon_width=0x7f080087;
+        public static final int notification_subtext_size=0x7f080088;
+        public static final int paddingBottom=0x7f080089;
+        public static final int paddingTop=0x7f08008a;
     }
     public static final class drawable {
         public static final int abc_ab_share_pack_mtrl_alpha=0x7f020000;
@@ -3005,8 +3006,9 @@ containing a value of this type.
         public static final int character_counter_pattern=0x7f0c0026;
         public static final int search_menu_title=0x7f0c0027;
         public static final int status_bar_notification_info_overflow=0x7f0c0028;
-        public static final int up=0x7f0c0029;
-        public static final int welcome_xyz_reader=0x7f0c002a;
+        public static final int transition_photo=0x7f0c0029;
+        public static final int up=0x7f0c002a;
+        public static final int welcome_xyz_reader=0x7f0c002b;
     }
     public static final class style {
         public static final int AlertDialog_AppCompat=0x7f0d0000;

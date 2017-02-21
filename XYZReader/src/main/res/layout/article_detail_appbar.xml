@@ -12,10 +12,11 @@
 
     <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
+            app:expandedTitleMarginBottom="@dimen/expanded_margin_bottom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:expandedTitleMarginStart="8dp"
+            app:expandedTitleMarginStart="16dp"
             app:expandedTitleMarginEnd="8dp"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -26,6 +27,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
+                android:transitionName="@string/transition_photo"
                 android:contentDescription="@string/app_name"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7"/>

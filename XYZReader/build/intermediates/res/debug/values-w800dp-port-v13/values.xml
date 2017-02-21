@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- From: file:/Users/arbalan/Desktop/Android-Nanodegree/xyzreader/XYZReader/src/main/res/values-w800dp-port/macro_layout.xml -->
-    <eat-comment/>
-    <integer name="list_column_count">2</integer>
-</resources>

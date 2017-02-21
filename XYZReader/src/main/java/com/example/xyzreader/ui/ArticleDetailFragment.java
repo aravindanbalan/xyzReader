@@ -1,7 +1,9 @@
 package com.example.xyzreader.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -45,6 +47,8 @@ public class ArticleDetailFragment extends Fragment implements
     private boolean mIsCard = false;
     private ImageView mHeaderImageView;
     private CollapsingToolbarLayout mCollapsingToolbar;
+    private Typeface roboto_regular;
+    private Typeface roboto_bold;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -90,7 +94,6 @@ public class ArticleDetailFragment extends Fragment implements
             getCurrentActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-
         mHeaderImageView = (ImageView) mRootView.findViewById(R.id.header_image);
 
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
@@ -120,6 +123,13 @@ public class ArticleDetailFragment extends Fragment implements
         return mRootView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        roboto_regular = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Regular.ttf");
+        roboto_bold = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Bold.ttf");
+    }
+
     private AppCompatActivity getCurrentActivity() {
         return ((AppCompatActivity) getActivity());
     }
@@ -130,8 +140,10 @@ public class ArticleDetailFragment extends Fragment implements
         }
 
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
+        bylineView.setTypeface(roboto_bold);
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        bodyView.setTypeface(roboto_regular);
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
