@@ -1,5 +1,8 @@
 package com.example.xyzreader.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -21,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +36,7 @@ import android.widget.TextView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.widgets.ScaledImageView;
+import com.example.xyzreader.widgets.TransitionAdapter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -57,6 +62,7 @@ public class ArticleDetailFragment extends Fragment implements
     private static final String ARG_STARTING_ALBUM_IMAGE_POSITION = "arg_starting_album_image_position";
     private int mStartingPosition;
     private int mAlbumPosition;
+    private FloatingActionButton fab;
 
     private final Callback mImageCallback = new Callback() {
         @Override
@@ -111,9 +117,6 @@ public class ArticleDetailFragment extends Fragment implements
 
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         getCurrentActivity().setSupportActionBar(toolbar);
-        if (getCurrentActivity().getSupportActionBar() != null) {
-            getCurrentActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         mHeaderImageView = (ScaledImageView) mRootView.findViewById(R.id.header_image);
         ViewCompat.setTransitionName(mHeaderImageView, getString(R.string.transition_photo) + mAlbumPosition);
@@ -130,7 +133,7 @@ public class ArticleDetailFragment extends Fragment implements
 
         mCollapsingToolbar = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) mRootView.findViewById(R.id.share_fab);
+        fab = (FloatingActionButton) mRootView.findViewById(R.id.share_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,8 +144,32 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
+        if (savedInstanceState == null && getActivity() != null) {
+            fab.setScaleX(0);
+            fab.setScaleY(0);
+            getActivity().getWindow().getEnterTransition().addListener(new TransitionAdapter() {
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.getWindow().getEnterTransition().removeListener(this);
+                        fab.animate().scaleX(1).scaleY(1);
+                    }
+                }
+            });
+        }
+
         bindViews();
         return mRootView;
+    }
+
+    public void onBackPressed(final AppCompatActivity activity) {
+        fab.animate().scaleX(0).scaleY(0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                activity.supportFinishAfterTransition();
+            }
+        });
     }
 
     @Override

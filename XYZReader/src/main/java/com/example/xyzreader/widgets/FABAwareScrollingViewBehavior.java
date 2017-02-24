@@ -4,18 +4,12 @@ import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v13.view.ViewCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
 
 public class FABAwareScrollingViewBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
     public FABAwareScrollingViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
-        return (dependency instanceof NestedScrollView);
     }
 
     @Override
@@ -30,12 +24,12 @@ public class FABAwareScrollingViewBehavior extends CoordinatorLayout.Behavior<Fl
                                final View target, final int dxConsumed, final int dyConsumed,
                                final int dxUnconsumed, final int dyUnconsumed) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-        if (dyConsumed > 0 && child.getVisibility() != View.VISIBLE) {
-            //scrolling down the content, show the FAB
-            child.show();
-        } else if (dyConsumed < 0 && child.getVisibility() == View.VISIBLE) {
-            //scrolling up the content, hide the FAB
+        if (dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
+            //when toolbar collapses, hide FAB
             child.hide();
+        } else if (dyConsumed < 0 && child.getVisibility() != View.VISIBLE) {
+            //when toolbar expands, show FAB
+            child.show();
         }
     }
 }
