@@ -10,14 +10,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v13.view.ViewCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +30,7 @@ import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.xyzreader.R;
@@ -35,6 +41,7 @@ import com.example.xyzreader.utils.ArticleUtility;
 import com.example.xyzreader.widgets.ScaledImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 import java.util.Map;
@@ -177,7 +184,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 updateRefreshingUI();
-            } else if(UpdaterService.BROADCAST_ACTION_STATE_ERROR.equals(intent.getAction())){
+            } else if (UpdaterService.BROADCAST_ACTION_STATE_ERROR.equals(intent.getAction())) {
 
                 String errorString = intent.getStringExtra(UpdaterService.EXTRA_ERROR);
                 Snackbar snackbar = Snackbar
@@ -228,7 +235,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-           return new ViewHolder(view);
+            return new ViewHolder(view);
         }
 
         @Override
@@ -247,13 +254,17 @@ public class ArticleListActivity extends AppCompatActivity implements
         private ScaledImageView thumbnailView;
         private TextView titleView;
         private TextView subtitleView;
+        private LinearLayout description;
         private int mPosition;
+        @ColorInt
+        private int backgroundRGB;
 
         ViewHolder(View view) {
             super(view);
             thumbnailView = (ScaledImageView) view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+            description = (LinearLayout) view.findViewById(R.id.description);
             itemView.setOnClickListener(this);
         }
 
@@ -273,9 +284,30 @@ public class ArticleListActivity extends AppCompatActivity implements
             thumbnailView.setTag(transition_string);
             ViewCompat.setTransitionName(thumbnailView, transition_string);
 
-            RequestCreator albumImageRequest = Picasso.with(getApplicationContext()).load(cursor.getString(ArticleLoader.Query.THUMB_URL));
-            albumImageRequest.into(thumbnailView);
+            Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    thumbnailView.setImageBitmap(bitmap);
 
+                    Palette palette = Palette.from(bitmap).generate();
+                    backgroundRGB = palette.getDarkMutedColor(ContextCompat.getColor(ArticleListActivity.this, R.color.black));
+                    description.setBackgroundColor(backgroundRGB);
+                    titleView.setTextColor(palette.getVibrantColor(ContextCompat.getColor(ArticleListActivity.this, R.color.white)));
+                    subtitleView.setTextColor(palette.getLightVibrantColor(ContextCompat.getColor(ArticleListActivity.this, R.color.white)));
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            };
+
+            String url = cursor.getString(ArticleLoader.Query.THUMB_URL);
+            RequestCreator albumImageRequest = Picasso.with(getApplicationContext()).load(url);
+            albumImageRequest.into(target);
             thumbnailView.setAspectRatio(cursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
             mPosition = position;
         }

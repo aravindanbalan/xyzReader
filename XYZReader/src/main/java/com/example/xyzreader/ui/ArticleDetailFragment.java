@@ -7,10 +7,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +18,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v13.view.ViewCompat;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -33,15 +33,15 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.widgets.ScaledImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import com.squareup.picasso.Target;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -66,6 +66,7 @@ public class ArticleDetailFragment extends Fragment implements
     private int mAlbumPosition;
     private FloatingActionButton fab;
     private Toolbar toolbar;
+    private int mMutedColor = 0xFF333333;
 
     private final Callback mImageCallback = new Callback() {
         @Override
@@ -214,24 +215,6 @@ public class ArticleDetailFragment extends Fragment implements
             RequestCreator albumImageRequest = Picasso.with(getActivity()).load(url);
             albumImageRequest.into(mHeaderImageView, mImageCallback);
             mHeaderImageView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-
-            try {
-                InputStream inputStream = getActivity().getContentResolver().openInputStream(Uri.parse(url));
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-
-                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
-
-                        if (vibrantSwatch != null) {
-                            mCollapsingToolbar.setExpandedTitleColor(vibrantSwatch.getTitleTextColor());
-                        }
-                    }
-                });
-
-            } catch (FileNotFoundException e) {
-            }
         }
     }
 
