@@ -1,16 +1,16 @@
 package com.example.xyzreader.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,11 +20,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v13.view.ViewCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,10 +36,12 @@ import android.widget.TextView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.widgets.ScaledImageView;
-import com.example.xyzreader.widgets.TransitionAdapter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -63,6 +65,7 @@ public class ArticleDetailFragment extends Fragment implements
     private int mStartingPosition;
     private int mAlbumPosition;
     private FloatingActionButton fab;
+    private Toolbar toolbar;
 
     private final Callback mImageCallback = new Callback() {
         @Override
@@ -115,7 +118,7 @@ public class ArticleDetailFragment extends Fragment implements
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+        toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         getCurrentActivity().setSupportActionBar(toolbar);
 
         mHeaderImageView = (ScaledImageView) mRootView.findViewById(R.id.header_image);
@@ -146,18 +149,6 @@ public class ArticleDetailFragment extends Fragment implements
 
         bindViews();
         return mRootView;
-    }
-
-    public void onBackPressed() {
-        fab.animate().scaleX(0).scaleY(0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                //FIXME not sure how to fix this. supportFinishAfterTransition() executes a reverse exit transaction as I have used a enter transition.
-                //And since the FAB is anchored to app bar layout(sliding from top), FAB is also sliding from top during Enter transition.
-                //During exit transaction its sliding back reverse back to top which forms a glitch in UI. Need help resolving this.
-                getCurrentActivity().supportFinishAfterTransition();
-            }
-        });
     }
 
     @Override
@@ -191,10 +182,10 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
+        final TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setTypeface(roboto_bold);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        final TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
         bodyView.setTypeface(roboto_regular);
 
         if (mCursor != null) {
@@ -223,6 +214,24 @@ public class ArticleDetailFragment extends Fragment implements
             RequestCreator albumImageRequest = Picasso.with(getActivity()).load(url);
             albumImageRequest.into(mHeaderImageView, mImageCallback);
             mHeaderImageView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+
+            try {
+                InputStream inputStream = getActivity().getContentResolver().openInputStream(Uri.parse(url));
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette palette) {
+                        Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+
+                        if (vibrantSwatch != null) {
+                            mCollapsingToolbar.setExpandedTitleColor(vibrantSwatch.getTitleTextColor());
+                        }
+                    }
+                });
+
+            } catch (FileNotFoundException e) {
+            }
         }
     }
 

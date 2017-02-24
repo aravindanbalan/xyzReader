@@ -120,14 +120,6 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        if (mCurrentDetailsFragment != null) {
-            mCurrentDetailsFragment.onBackPressed();
-        }
-        super.onBackPressed();
-    }
-
-    @Override
     public void finishAfterTransition() {
         mIsReturning = true;
         Intent data = new Intent();
