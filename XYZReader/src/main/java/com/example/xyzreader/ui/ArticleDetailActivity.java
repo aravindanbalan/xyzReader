@@ -124,6 +124,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         if (mCurrentDetailsFragment != null) {
             mCurrentDetailsFragment.onBackPressed(this);
         }
+        super.onBackPressed();
     }
 
     @Override

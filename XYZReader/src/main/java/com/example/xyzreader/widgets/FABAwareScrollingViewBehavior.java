@@ -7,7 +7,7 @@ import android.support.v13.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class FABAwareScrollingViewBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
+public class FABAwareScrollingViewBehavior extends FloatingActionButton.Behavior {
     public FABAwareScrollingViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
