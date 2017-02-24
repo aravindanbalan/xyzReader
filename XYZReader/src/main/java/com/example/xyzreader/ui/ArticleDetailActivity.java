@@ -114,6 +114,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     public String getCacheKey(String url) {
+        //ImageLoader Volley stores it in this format.
         return (new StringBuilder(url.length() + 12)).append("#W").append(0).append("#H").append(0).append(url).toString();
     }
 

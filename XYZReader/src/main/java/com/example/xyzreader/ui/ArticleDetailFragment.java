@@ -154,6 +154,10 @@ public class ArticleDetailFragment extends Fragment implements
                             mMutedColor = palette.getDarkMutedColor(0xFF333333);
                             mRootView.findViewById(R.id.meta_bar)
                                 .setBackgroundColor(mMutedColor);
+
+                            if(getActivity()!=null) {
+                                getActivity().startPostponedEnterTransition();
+                            }
                         }
                     }
 
