@@ -122,7 +122,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (mCurrentDetailsFragment != null) {
-            mCurrentDetailsFragment.onBackPressed(this);
+            mCurrentDetailsFragment.onBackPressed();
         }
         super.onBackPressed();
     }

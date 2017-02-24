@@ -144,30 +144,18 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        if (savedInstanceState == null && getActivity() != null) {
-            fab.setScaleX(0);
-            fab.setScaleY(0);
-            getActivity().getWindow().getEnterTransition().addListener(new TransitionAdapter() {
-                @Override
-                public void onTransitionEnd(Transition transition) {
-                    Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.getWindow().getEnterTransition().removeListener(this);
-                        fab.animate().scaleX(1).scaleY(1);
-                    }
-                }
-            });
-        }
-
         bindViews();
         return mRootView;
     }
 
-    public void onBackPressed(final AppCompatActivity activity) {
+    public void onBackPressed() {
         fab.animate().scaleX(0).scaleY(0).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                activity.supportFinishAfterTransition();
+                //FIXME not sure how to fix this. supportFinishAfterTransition() executes a reverse exit transaction as I have used a enter transition.
+                //And since the FAB is anchored to app bar layout(sliding from top), FAB is also sliding from top during Enter transition.
+                //During exit transaction its sliding back reverse back to top which forms a glitch in UI. Need help resolving this.
+                getCurrentActivity().supportFinishAfterTransition();
             }
         });
     }
