@@ -10,19 +10,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v13.view.ViewCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -39,9 +35,6 @@ import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
 import com.example.xyzreader.widgets.ScaledImageView;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
-import com.squareup.picasso.Target;
 
 import java.util.List;
 import java.util.Map;
@@ -160,9 +153,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         if (startingPosition != currentPosition) {
             mRecyclerView.scrollToPosition(currentPosition);
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            postponeEnterTransition();
-//        }
+
         mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -284,30 +275,12 @@ public class ArticleListActivity extends AppCompatActivity implements
             thumbnailView.setTag(transition_string);
             ViewCompat.setTransitionName(thumbnailView, transition_string);
 
-            Target target = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    thumbnailView.setImageBitmap(bitmap);
-
-                    Palette palette = Palette.from(bitmap).generate();
-                    backgroundRGB = palette.getDarkMutedColor(ContextCompat.getColor(ArticleListActivity.this, R.color.black));
-                    description.setBackgroundColor(backgroundRGB);
-                    titleView.setTextColor(palette.getVibrantColor(ContextCompat.getColor(ArticleListActivity.this, R.color.white)));
-                    subtitleView.setTextColor(palette.getLightVibrantColor(ContextCompat.getColor(ArticleListActivity.this, R.color.white)));
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                }
-            };
-
             String url = cursor.getString(ArticleLoader.Query.THUMB_URL);
-            RequestCreator albumImageRequest = Picasso.with(getApplicationContext()).load(url);
-            albumImageRequest.into(target);
+
+            thumbnailView.setImageUrl(
+                url,
+                ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+
             thumbnailView.setAspectRatio(cursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
             mPosition = position;
         }
