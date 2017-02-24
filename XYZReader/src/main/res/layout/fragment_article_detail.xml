@@ -1,6 +1,6 @@
 <android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,6 +12,7 @@
     <android.support.v4.widget.NestedScrollView
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
+            android:scrollbars="none"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -22,6 +23,7 @@
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/share_fab"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
@@ -29,9 +31,11 @@
             android:src="@drawable/ic_share"
             app:borderWidth="0dp"
             app:fabSize="normal"
+            app:elevation="6dp"
             app:layout_anchor="@id/scrollview"
             android:contentDescription="@string/action_share"
             app:layout_anchorGravity="bottom|right"
+            app:layout_behavior="com.example.xyzreader.widgets.FABAwareScrollingViewBehavior"
             app:pressedTranslationZ="12dp" />
 
 </android.support.design.widget.CoordinatorLayout>
