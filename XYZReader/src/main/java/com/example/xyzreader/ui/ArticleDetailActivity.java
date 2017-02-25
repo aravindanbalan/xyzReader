@@ -22,10 +22,12 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
-import com.example.xyzreader.widgets.ScaledImageView;
+import com.example.xyzreader.utils.ArticleUtility;
 
 import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_CURRENT_ALBUM_POSITION;
 import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_STARTING_ALBUM_POSITION;
@@ -35,6 +37,7 @@ import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_STARTING_ALBUM_
  */
 public class ArticleDetailActivity extends AppCompatActivity
     implements LoaderManager.LoaderCallbacks<Cursor>, ImageLoaderHelper.Callbacks {
+    private static final String TAG = "ArticleDetailActivity";
     private Cursor mCursor;
     private long mStartId;
     private ViewPager mPager;
@@ -78,6 +81,12 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
         mPager.setCurrentItem(mCurrentPosition);
+        Log.i(TAG, "****** current postition : "+ mCurrentPosition);
+//        if (mCursor != null) {
+//            mCursor.moveToPosition(mCurrentPosition);
+//            mSelectedImageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
+//            Log.i(TAG, "****** current postition : "+ mCurrentPosition);
+//        }
         mPager.setPageMargin((int) TypedValue
             .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
 
@@ -91,9 +100,11 @@ public class ArticleDetailActivity extends AppCompatActivity
 
                     Log.i("*******", "*********** image url " + mSelectedImageUrl);
                     if (imgLoadHelper.getImageLoader().isCached(mSelectedImageUrl, 0, 0)) {
-                        Bitmap bitmap = imgLoadHelper.getBitmap(getCacheKey(mSelectedImageUrl));
+                        Log.i(TAG, "****** in cache");
+                        Bitmap bitmap = imgLoadHelper.getBitmap(ArticleUtility.getCacheKey(mSelectedImageUrl));
                         setBackdropImage(bitmap);
                     } else {
+                        Log.i(TAG, "******not in cache : " + ArticleUtility.getCacheKey(mSelectedImageUrl));
                         setBackdropDefaults();
                     }
                 }
@@ -106,11 +117,6 @@ public class ArticleDetailActivity extends AppCompatActivity
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
             }
         }
-    }
-
-    public String getCacheKey(String url) {
-        //ImageLoader Volley stores it in this format.
-        return (new StringBuilder(url.length() + 12)).append("#W").append(0).append("#H").append(0).append(url).toString();
     }
 
     @Override
@@ -152,6 +158,20 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
             mStartId = 0;
         }
+
+        mSelectedImageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
+        ImageLoaderHelper.getInstance(ArticleDetailActivity.this).requestFrom(this).getImageLoader()
+            .get(mSelectedImageUrl, new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+
+                }
+            });
+
     }
 
     @Override
@@ -181,10 +201,38 @@ public class ArticleDetailActivity extends AppCompatActivity
         collapseToolBar.setContentScrimColor(ContextCompat.getColor(this, android.R.color.transparent));
     }
 
+    //No longer needed
+    public void retryImageLoading() {
+        //retry
+        Log.i(TAG, "Retrying again to load image");
+        if (mSelectedImageUrl != null) {
+            ImageLoaderHelper.getInstance(ArticleDetailActivity.this).requestFrom(this).getImageLoader()
+                .get(mSelectedImageUrl, new ImageLoader.ImageListener() {
+                    @Override
+                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                    }
+
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                });
+        }
+    }
+
     @Override
     public void onAddedToCache(String key, Bitmap bitmap) {
-        if (getCacheKey(mSelectedImageUrl).equals(key)) {
+        Log.i(TAG, "****** added to cache current key: " + key  + " " + mSelectedImageUrl );
+        if (ArticleUtility.getCacheKey(mSelectedImageUrl).equals(key)) {
+            Log.i(TAG, "****** added to cache" + key);
             setBackdropImage(bitmap);
+        }
+    }
+
+    @Override
+    public void onGetFromCache(String key, Bitmap bitmap) {
+        if (ArticleUtility.getCacheKey(mSelectedImageUrl).equals(key)) {
+            photoView.setImageBitmap(bitmap);
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -25,7 +26,7 @@ public class ImageLoaderHelper {
     private ImageLoaderHelper.Callbacks callbacks;
 
     public ImageLoaderHelper requestFrom(Activity activity) {
-        if (activity instanceof ArticleDetailActivity) {
+        if (activity instanceof ArticleDetailActivity || activity instanceof ArticleListActivity) {
             callbacks = (ImageLoaderHelper.Callbacks) activity;
         }
         return sInstance;
@@ -37,6 +38,7 @@ public class ImageLoaderHelper {
             @Override
             public void putBitmap(String key, Bitmap value) {
                 mImageCache.put(key, value);
+                Log.i("********", "*********** put bitmap");
                 if (callbacks != null) {
                     callbacks.onAddedToCache(key, value);
                 }
@@ -44,6 +46,10 @@ public class ImageLoaderHelper {
 
             @Override
             public Bitmap getBitmap(String key) {
+                Log.i("********", "*********** get bitmap");
+                if (callbacks != null) {
+                    callbacks.onGetFromCache(key, mImageCache.get(key));
+                }
                 return mImageCache.get(key);
             }
         };
@@ -60,5 +66,6 @@ public class ImageLoaderHelper {
 
     public interface Callbacks {
         void onAddedToCache(String key, Bitmap bitmap);
+        void onGetFromCache(String key, Bitmap bitmap);
     }
 }

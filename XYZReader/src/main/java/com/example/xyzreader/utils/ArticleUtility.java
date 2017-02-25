@@ -14,4 +14,12 @@ public class ArticleUtility {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, metrics) + 0.5f);
     }
+
+    public static String getCacheKey(String url) {
+        //ImageLoader Volley stores it in this format.
+        if(url == null|| url.length() == 0){
+            return "";
+        }
+        return (new StringBuilder(url.length() + 12)).append("#W").append(0).append("#H").append(0).append(url).toString();
+    }
 }
