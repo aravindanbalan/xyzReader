@@ -10,7 +10,7 @@
         android:focusable="true"
         android:elevation="2dp"
         android:background="@drawable/listactivity_background"
-        android:foreground="?selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
             android:layout_width="match_parent"
