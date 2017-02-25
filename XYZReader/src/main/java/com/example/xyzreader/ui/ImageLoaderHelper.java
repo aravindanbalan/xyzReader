@@ -38,7 +38,6 @@ public class ImageLoaderHelper {
             @Override
             public void putBitmap(String key, Bitmap value) {
                 mImageCache.put(key, value);
-                Log.i("********", "*********** put bitmap");
                 if (callbacks != null) {
                     callbacks.onAddedToCache(key, value);
                 }
@@ -46,7 +45,6 @@ public class ImageLoaderHelper {
 
             @Override
             public Bitmap getBitmap(String key) {
-                Log.i("********", "*********** get bitmap");
                 if (callbacks != null) {
                     callbacks.onGetFromCache(key, mImageCache.get(key));
                 }

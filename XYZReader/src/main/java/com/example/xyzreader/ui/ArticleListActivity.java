@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v13.view.ViewCompat;
@@ -25,14 +24,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -50,7 +48,7 @@ import java.util.Map;
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-    LoaderManager.LoaderCallbacks<Cursor>, ImageLoaderHelper.Callbacks  {
+    LoaderManager.LoaderCallbacks<Cursor>, ImageLoaderHelper.Callbacks {
 
     private CoordinatorLayout mCoordinatorLayout;
     private Typeface roboto_regular;
@@ -198,13 +196,43 @@ public class ArticleListActivity extends AppCompatActivity implements
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
-
     @Override
     public void onAddedToCache(String key, Bitmap bitmap) {
+        //FIXME Tag based palette not giving consistent colors as we scroll as recycler view recycles view holders. Need help.
+        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors shud be chosen (first vibrant then dark muted etc)??
+        //setDescriptionBackground(key, bitmap);
     }
 
     @Override
     public void onGetFromCache(String key, Bitmap bitmap) {
+        //FIXME Tag based palette not giving consistent colors as we scroll as recycler view recycles view holders. Need help.
+        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors shud be chosen (first vibrant then dark muted etc)??
+        //setDescriptionBackground(key, bitmap);
+    }
+
+    private void setDescriptionBackground(String key, Bitmap bitmap) {
+        if (bitmap != null) {
+            Palette palette = Palette.from(bitmap).generate();
+            int defaultColor = 0xFF333333;
+            int palettecolor = palette.getDominantColor(defaultColor);
+
+            if (palettecolor == defaultColor) {
+                palettecolor = palette.getDarkMutedColor(defaultColor);
+            }
+
+            //try muted color
+            if(palettecolor == defaultColor){
+                palettecolor = palette.getLightMutedColor(defaultColor);
+            }
+
+            if (palettecolor == defaultColor) {
+                palettecolor = palette.getVibrantColor(defaultColor);
+            }
+
+            if (mRecyclerView.findViewWithTag(ArticleUtility.getDescriptionTagCardKey(key)) != null) {
+                mRecyclerView.findViewWithTag(ArticleUtility.getDescriptionTagCardKey(key)).setBackgroundColor(palettecolor);
+            }
+        }
     }
 
     @Override
@@ -260,8 +288,6 @@ public class ArticleListActivity extends AppCompatActivity implements
         private TextView subtitleView;
         private LinearLayout description;
         private int mPosition;
-        @ColorInt
-        private int backgroundRGB;
 
         ViewHolder(View view) {
             super(view);
@@ -290,9 +316,13 @@ public class ArticleListActivity extends AppCompatActivity implements
 
             String url = cursor.getString(ArticleLoader.Query.THUMB_URL);
 
+            description.setTag(ArticleUtility.getDescriptionTagCardKeyFromUrl(url));
+            titleView.setTag(ArticleUtility.getTitleTagKeyFromUrl(url));
+            subtitleView.setTag(ArticleUtility.getSubTitleTagKeyFromUrl(url));
+
             thumbnailView.setImageUrl(
                 url,
-                ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
+                ImageLoaderHelper.getInstance(ArticleListActivity.this).requestFrom(ArticleListActivity.this).getImageLoader());
 
             thumbnailView.setAspectRatio(cursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
             mPosition = position;

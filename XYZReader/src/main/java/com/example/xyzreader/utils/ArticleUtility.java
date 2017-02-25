@@ -22,4 +22,28 @@ public class ArticleUtility {
         }
         return (new StringBuilder(url.length() + 12)).append("#W").append(0).append("#H").append(0).append(url).toString();
     }
+
+    public static String getDescriptionTagCardKeyFromUrl(String url){
+        return "Desc#" + getCacheKey(url);
+    }
+
+    public static String getDescriptionTagCardKey(String key){
+        return "Desc#" + key;
+    }
+
+    public static String getTitleTagKeyFromUrl(String url){
+        return "Title#" + getCacheKey(url);
+    }
+
+    public static String getTitleTagKey(String key){
+        return "Title#" + key;
+    }
+
+    public static String getSubTitleTagKeyFromUrl(String url){
+        return "SubTitle#" + getCacheKey(url);
+    }
+
+    public static String getSubTitleTagKey(String key){
+        return "SubTitle#" + key;
+    }
 }

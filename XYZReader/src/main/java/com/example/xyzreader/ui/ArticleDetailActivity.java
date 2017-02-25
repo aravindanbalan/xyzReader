@@ -81,12 +81,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
         mPager.setCurrentItem(mCurrentPosition);
-        Log.i(TAG, "****** current postition : "+ mCurrentPosition);
-//        if (mCursor != null) {
-//            mCursor.moveToPosition(mCurrentPosition);
-//            mSelectedImageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
-//            Log.i(TAG, "****** current postition : "+ mCurrentPosition);
-//        }
         mPager.setPageMargin((int) TypedValue
             .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
 
@@ -98,13 +92,10 @@ public class ArticleDetailActivity extends AppCompatActivity
                     mCursor.moveToPosition(position);
                     mSelectedImageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
 
-                    Log.i("*******", "*********** image url " + mSelectedImageUrl);
                     if (imgLoadHelper.getImageLoader().isCached(mSelectedImageUrl, 0, 0)) {
-                        Log.i(TAG, "****** in cache");
                         Bitmap bitmap = imgLoadHelper.getBitmap(ArticleUtility.getCacheKey(mSelectedImageUrl));
                         setBackdropImage(bitmap);
                     } else {
-                        Log.i(TAG, "******not in cache : " + ArticleUtility.getCacheKey(mSelectedImageUrl));
                         setBackdropDefaults();
                     }
                 }
@@ -147,7 +138,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         // Select the start ID
         if (mStartId > 0) {
             mCursor.moveToFirst();
-            // TODO: optimize
             while (!mCursor.isAfterLast()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
                     final int position = mCursor.getPosition();
@@ -222,9 +212,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public void onAddedToCache(String key, Bitmap bitmap) {
-        Log.i(TAG, "****** added to cache current key: " + key  + " " + mSelectedImageUrl );
         if (ArticleUtility.getCacheKey(mSelectedImageUrl).equals(key)) {
-            Log.i(TAG, "****** added to cache" + key);
             setBackdropImage(bitmap);
         }
     }

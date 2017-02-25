@@ -9,9 +9,11 @@
         android:clickable="true"
         android:focusable="true"
         android:elevation="2dp"
+        android:background="@drawable/listactivity_background"
         android:foreground="?selectableItemBackground">
 
-    <LinearLayout android:layout_width="match_parent"
+    <LinearLayout
+            android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="vertical">
 
@@ -34,16 +36,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    style="?android:attr/textAppearanceLarge"
                     android:ellipsize="none"
                     android:maxLines="2"/>
 
             <TextView
                     android:id="@+id/article_subtitle"
+                    style="?android:attr/textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textSize="12sp"
                     android:textStyle="italic"
                     android:maxLines="3"
                     android:ellipsize="none"/>
