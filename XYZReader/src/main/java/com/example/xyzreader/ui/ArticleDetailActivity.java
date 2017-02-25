@@ -1,19 +1,15 @@
 package com.example.xyzreader.ui;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v13.view.ViewCompat;
@@ -21,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,9 +25,7 @@ import android.widget.ImageView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
-
-import java.util.List;
-import java.util.Map;
+import com.example.xyzreader.widgets.ScaledImageView;
 
 import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_CURRENT_ALBUM_POSITION;
 import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_STARTING_ALBUM_POSITION;
@@ -51,7 +46,6 @@ public class ArticleDetailActivity extends AppCompatActivity
     private ImageView photoView;
     private String mSelectedImageUrl;
     private ImageLoaderHelper imgLoadHelper;
-    private boolean mIsReturning;
 
     private static final String STATE_CURRENT_PAGE_POSITION = "state_current_page_position";
 
@@ -95,6 +89,7 @@ public class ArticleDetailActivity extends AppCompatActivity
                     mCursor.moveToPosition(position);
                     mSelectedImageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
 
+                    Log.i("*******", "*********** image url " + mSelectedImageUrl);
                     if (imgLoadHelper.getImageLoader().isCached(mSelectedImageUrl, 0, 0)) {
                         Bitmap bitmap = imgLoadHelper.getBitmap(getCacheKey(mSelectedImageUrl));
                         setBackdropImage(bitmap);
