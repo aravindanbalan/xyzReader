@@ -8,40 +8,47 @@
         android:layout_marginBottom="4dp"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?selectableItemBackground">
+        android:elevation="2dp"
+        android:background="@drawable/listactivity_background"
+        android:foreground="?android:attr/selectableItemBackground">
 
-    <!--suppress AndroidLintContentDescription -->
-    <com.example.xyzreader.widgets.ScaledImageView
-            android:id="@+id/thumbnail"
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    <!--image scrim -->
-    <View android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:background="@drawable/scrim_image"/>
-
-    <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:paddingLeft="8dp"
-                  android:paddingRight="8dp"
-                  android:orientation="vertical"
-                  android:layout_gravity="bottom">
-        <TextView
-                android:id="@+id/article_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:ellipsize="end"
-                android:maxLines="2"/>
+                  android:orientation="vertical">
 
-        <TextView
-                android:id="@+id/article_subtitle"
+        <!--suppress AndroidLintContentDescription -->
+        <com.example.xyzreader.widgets.ScaledImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <LinearLayout
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/white"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:orientation="vertical"
+                android:layout_gravity="bottom">
+            <TextView
+                    android:id="@+id/article_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    style="?android:attr/textAppearanceLarge"
+                    android:ellipsize="none"
+                    android:maxLines="2"/>
+
+            <TextView
+                    android:id="@+id/article_subtitle"
+                    style="?android:attr/textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textStyle="italic"
+                    android:maxLines="3"
+                    android:ellipsize="none"/>
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

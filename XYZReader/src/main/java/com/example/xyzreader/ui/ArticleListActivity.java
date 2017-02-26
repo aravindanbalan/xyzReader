@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,13 +19,16 @@ import android.support.design.widget.Snackbar;
 import android.support.v13.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.xyzreader.R;
@@ -33,8 +37,7 @@ import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
 import com.example.xyzreader.widgets.ScaledImageView;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
+import com.example.xyzreader.widgets.SpaceItemDecoration;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +49,7 @@ import java.util.Map;
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-    LoaderManager.LoaderCallbacks<Cursor> {
+    LoaderManager.LoaderCallbacks<Cursor>, ImageLoaderHelper.Callbacks {
 
     private CoordinatorLayout mCoordinatorLayout;
     private Typeface roboto_regular;
@@ -153,9 +156,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         if (startingPosition != currentPosition) {
             mRecyclerView.scrollToPosition(currentPosition);
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            postponeEnterTransition();
-//        }
+
         mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -177,7 +178,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 updateRefreshingUI();
-            } else if(UpdaterService.BROADCAST_ACTION_STATE_ERROR.equals(intent.getAction())){
+            } else if (UpdaterService.BROADCAST_ACTION_STATE_ERROR.equals(intent.getAction())) {
 
                 String errorString = intent.getStringExtra(UpdaterService.EXTRA_ERROR);
                 Snackbar snackbar = Snackbar
@@ -197,14 +198,58 @@ public class ArticleListActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onAddedToCache(String key, Bitmap bitmap) {
+        //FIXME Tag based palette approach below not giving consistent colors as we scroll as recycler view recycles view holders on scroll. Need help on how to handle this.
+        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors needs to be chosen (first vibrant then dark muted etc)??
+        //FIXME For some images muted will work and for some vibrant works and how to decide dynamically which suits bests????
+        //setDescriptionBackground(key, bitmap);
+    }
+
+    @Override
+    public void onGetFromCache(String key, Bitmap bitmap) {
+        //FIXME Tag based palette approach below not giving consistent colors as we scroll as recycler view recycles view holders on scroll. Need help on how to handle this.
+        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors needs to be chosen (first vibrant then dark muted etc)??
+        //FIXME For some images muted will work and for some vibrant works and how to decide dynamically which suits bests????
+        //setDescriptionBackground(key, bitmap);
+    }
+
+    private void setDescriptionBackground(String key, Bitmap bitmap) {
+        if (bitmap != null) {
+            Palette palette = Palette.from(bitmap).generate();
+            int defaultColor = 0xFF333333;
+            int palettecolor = palette.getDominantColor(defaultColor);
+
+            if (palettecolor == defaultColor) {
+                palettecolor = palette.getDarkMutedColor(defaultColor);
+            }
+
+            //try muted color
+            if(palettecolor == defaultColor){
+                palettecolor = palette.getLightMutedColor(defaultColor);
+            }
+
+            if (palettecolor == defaultColor) {
+                palettecolor = palette.getVibrantColor(defaultColor);
+            }
+
+            if (mRecyclerView.findViewWithTag(ArticleUtility.getDescriptionTagCardKey(key)) != null) {
+                mRecyclerView.findViewWithTag(ArticleUtility.getDescriptionTagCardKey(key)).setBackgroundColor(palettecolor);
+            }
+        }
+    }
+
+    @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Adapter adapter = new Adapter(cursor);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
+        int spaceItemDecorationValue = getResources().getInteger(R.integer.space_item_decoration);
         StaggeredGridLayoutManager sglm =
             new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(sglm);
+        SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration(spaceItemDecorationValue);
+        mRecyclerView.addItemDecoration(spaceItemDecoration);
     }
 
     @Override
@@ -228,7 +273,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-           return new ViewHolder(view);
+            return new ViewHolder(view);
         }
 
         @Override
@@ -247,6 +292,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         private ScaledImageView thumbnailView;
         private TextView titleView;
         private TextView subtitleView;
+        private LinearLayout description;
         private int mPosition;
 
         ViewHolder(View view) {
@@ -254,6 +300,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             thumbnailView = (ScaledImageView) view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+            description = (LinearLayout) view.findViewById(R.id.description);
             itemView.setOnClickListener(this);
         }
 
@@ -273,8 +320,15 @@ public class ArticleListActivity extends AppCompatActivity implements
             thumbnailView.setTag(transition_string);
             ViewCompat.setTransitionName(thumbnailView, transition_string);
 
-            RequestCreator albumImageRequest = Picasso.with(getApplicationContext()).load(cursor.getString(ArticleLoader.Query.THUMB_URL));
-            albumImageRequest.into(thumbnailView);
+            String url = cursor.getString(ArticleLoader.Query.THUMB_URL);
+
+            description.setTag(ArticleUtility.getDescriptionTagCardKeyFromUrl(url));
+            titleView.setTag(ArticleUtility.getTitleTagKeyFromUrl(url));
+            subtitleView.setTag(ArticleUtility.getSubTitleTagKeyFromUrl(url));
+
+            thumbnailView.setImageUrl(
+                url,
+                ImageLoaderHelper.getInstance(ArticleListActivity.this).requestFrom(ArticleListActivity.this).getImageLoader());
 
             thumbnailView.setAspectRatio(cursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
             mPosition = position;
@@ -287,7 +341,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             intent.putExtra(EXTRA_STARTING_ALBUM_POSITION, mPosition);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this, thumbnailView, thumbnailView.getTransitionName() + mPosition).toBundle();
+                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(ArticleListActivity.this, view, thumbnailView.getTransitionName() + mPosition).toBundle();
                 startActivity(intent, bundle);
             } else {
                 startActivity(intent);

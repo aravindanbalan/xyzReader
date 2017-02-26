@@ -4,12 +4,12 @@
                android:duration="500">
     <slide android:slideEdge="top">
         <targets>
-            <target android:targetId="@id/app_bar_layout" />
+            <target android:targetId="@id/app_bar_layout"/>
         </targets>
     </slide>
     <slide android:slideEdge="bottom">
         <targets>
-            <target android:targetId="@id/scrollview" />
+            <target android:targetId="@id/cardview"/>
         </targets>
     </slide>
 </transitionSet>

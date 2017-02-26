@@ -2,9 +2,10 @@ package com.example.xyzreader.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
-public class ScaledImageView extends ImageView {
+import com.android.volley.toolbox.NetworkImageView;
+
+public class ScaledImageView extends NetworkImageView {
     private float mAspectRatio = 1.5f;
 
     public ScaledImageView(Context context) {

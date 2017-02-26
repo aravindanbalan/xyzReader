@@ -1,30 +1,33 @@
 package com.example.xyzreader.ui;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v13.view.ViewCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
-
-import java.util.List;
-import java.util.Map;
+import com.example.xyzreader.utils.ArticleUtility;
 
 import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_CURRENT_ALBUM_POSITION;
 import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_STARTING_ALBUM_POSITION;
@@ -33,42 +36,21 @@ import static com.example.xyzreader.ui.ArticleListActivity.EXTRA_STARTING_ALBUM_
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
 public class ArticleDetailActivity extends AppCompatActivity
-    implements LoaderManager.LoaderCallbacks<Cursor> {
+    implements LoaderManager.LoaderCallbacks<Cursor>, ImageLoaderHelper.Callbacks {
+    private static final String TAG = "ArticleDetailActivity";
     private Cursor mCursor;
     private long mStartId;
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
     private int mCurrentPosition;
     private int mStartingPosition;
-    private boolean mIsReturning;
-    private ArticleDetailFragment mCurrentDetailsFragment;
+
+    private CollapsingToolbarLayout collapseToolBar;
+    private ImageView photoView;
+    private String mSelectedImageUrl;
+    private ImageLoaderHelper imgLoadHelper;
 
     private static final String STATE_CURRENT_PAGE_POSITION = "state_current_page_position";
-
-    @SuppressLint("NewApi")
-    private final SharedElementCallback mCallback = new SharedElementCallback() {
-        @Override
-        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-            if (mIsReturning) {
-                ImageView sharedElement = mCurrentDetailsFragment.getAlbumImage();
-                if (sharedElement == null) {
-                    // If shared element is null, then it has been scrolled off screen and
-                    // no longer visible. In this case we cancel the shared element transition by
-                    // removing the shared element from the shared elements map.
-                    names.clear();
-                    sharedElements.clear();
-                } else if (mStartingPosition != mCurrentPosition) {
-                    // If the user has swiped to a different ViewPager page, then we need to
-                    // remove the old shared element and replace it with the new shared element
-                    // that should be transitioned instead.
-                    names.clear();
-                    names.add(sharedElement.getTransitionName());
-                    sharedElements.clear();
-                    sharedElements.put(sharedElement.getTransitionName(), sharedElement);
-                }
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +62,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_article_detail);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            postponeEnterTransition();
-            setEnterSharedElementCallback(mCallback);
-        }
-
         mStartingPosition = getIntent().getIntExtra(EXTRA_STARTING_ALBUM_POSITION, 0);
         if (savedInstanceState == null) {
             mCurrentPosition = mStartingPosition;
@@ -92,7 +69,13 @@ public class ArticleDetailActivity extends AppCompatActivity
             mCurrentPosition = savedInstanceState.getInt(STATE_CURRENT_PAGE_POSITION);
         }
 
+        imgLoadHelper = ImageLoaderHelper.getInstance(this);
+
         getLoaderManager().initLoader(0, null, this);
+
+        collapseToolBar = (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
+        photoView = (ImageView) findViewById(R.id.photo);
+        ViewCompat.setTransitionName(photoView, getString(R.string.transition_photo) + mCurrentPosition);
 
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -107,6 +90,14 @@ public class ArticleDetailActivity extends AppCompatActivity
             public void onPageSelected(int position) {
                 if (mCursor != null) {
                     mCursor.moveToPosition(position);
+                    mSelectedImageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
+
+                    if (imgLoadHelper.getImageLoader().isCached(mSelectedImageUrl, 0, 0)) {
+                        Bitmap bitmap = imgLoadHelper.getBitmap(ArticleUtility.getCacheKey(mSelectedImageUrl));
+                        setBackdropImage(bitmap);
+                    } else {
+                        setBackdropDefaults();
+                    }
                 }
                 mCurrentPosition = position;
             }
@@ -121,7 +112,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public void finishAfterTransition() {
-        mIsReturning = true;
         Intent data = new Intent();
         data.putExtra(EXTRA_STARTING_ALBUM_POSITION, mStartingPosition);
         data.putExtra(EXTRA_CURRENT_ALBUM_POSITION, mCurrentPosition);
@@ -148,7 +138,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         // Select the start ID
         if (mStartId > 0) {
             mCursor.moveToFirst();
-            // TODO: optimize
             while (!mCursor.isAfterLast()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
                     final int position = mCursor.getPosition();
@@ -159,12 +148,80 @@ public class ArticleDetailActivity extends AppCompatActivity
             }
             mStartId = 0;
         }
+
+        mSelectedImageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
+        ImageLoaderHelper.getInstance(ArticleDetailActivity.this).requestFrom(this).getImageLoader()
+            .get(mSelectedImageUrl, new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+
+                }
+            });
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
+    }
+
+    public void setBackdropImage(Bitmap bitmap) {
+        if (bitmap != null) {
+            Palette palette = Palette.from(bitmap).generate();
+            photoView.setImageBitmap(bitmap);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(palette.getDarkVibrantColor(ContextCompat.getColor(this, android.R.color.transparent)));
+            }
+            collapseToolBar.setContentScrimColor(palette.getVibrantColor(ContextCompat.getColor(this, android.R.color.transparent)));
+        } else {
+            setBackdropDefaults();
+        }
+    }
+
+    public void setBackdropDefaults() {
+        photoView.setImageBitmap(null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.transparent));
+        }
+        collapseToolBar.setContentScrimColor(ContextCompat.getColor(this, android.R.color.transparent));
+    }
+
+    //No longer needed
+    public void retryImageLoading() {
+        //retry
+        Log.i(TAG, "Retrying again to load image");
+        if (mSelectedImageUrl != null) {
+            ImageLoaderHelper.getInstance(ArticleDetailActivity.this).requestFrom(this).getImageLoader()
+                .get(mSelectedImageUrl, new ImageLoader.ImageListener() {
+                    @Override
+                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                    }
+
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                });
+        }
+    }
+
+    @Override
+    public void onAddedToCache(String key, Bitmap bitmap) {
+        if (ArticleUtility.getCacheKey(mSelectedImageUrl).equals(key)) {
+            setBackdropImage(bitmap);
+        }
+    }
+
+    @Override
+    public void onGetFromCache(String key, Bitmap bitmap) {
+        if (ArticleUtility.getCacheKey(mSelectedImageUrl).equals(key)) {
+            photoView.setImageBitmap(bitmap);
+        }
     }
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -175,13 +232,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         @Override
         public Fragment getItem(int position) {
             mCursor.moveToPosition(position);
-            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), position, mStartingPosition);
-        }
-
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            super.setPrimaryItem(container, position, object);
-            mCurrentDetailsFragment = (ArticleDetailFragment) object;
+            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
         }
 
         @Override
