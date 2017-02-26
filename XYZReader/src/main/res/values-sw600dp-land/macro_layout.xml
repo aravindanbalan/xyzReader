@@ -1,6 +1,7 @@
 <resources>
     <!-- detail -->
     <integer name="list_column_count">3</integer>
+    <integer name="space_item_decoration">16</integer>
     <dimen name="expanded_margin_bottom">120dp</dimen>
     <dimen name="detail_photo_height">350dp</dimen>
 </resources>

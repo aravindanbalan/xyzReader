@@ -37,6 +37,7 @@ import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
 import com.example.xyzreader.widgets.ScaledImageView;
+import com.example.xyzreader.widgets.SpaceItemDecoration;
 
 import java.util.List;
 import java.util.Map;
@@ -198,15 +199,17 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     public void onAddedToCache(String key, Bitmap bitmap) {
-        //FIXME Tag based palette not giving consistent colors as we scroll as recycler view recycles view holders. Need help.
-        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors shud be chosen (first vibrant then dark muted etc)??
+        //FIXME Tag based palette approach below not giving consistent colors as we scroll as recycler view recycles view holders on scroll. Need help on how to handle this.
+        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors needs to be chosen (first vibrant then dark muted etc)??
+        //FIXME For some images muted will work and for some vibrant works and how to decide dynamically which suits bests????
         //setDescriptionBackground(key, bitmap);
     }
 
     @Override
     public void onGetFromCache(String key, Bitmap bitmap) {
-        //FIXME Tag based palette not giving consistent colors as we scroll as recycler view recycles view holders. Need help.
-        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors shud be chosen (first vibrant then dark muted etc)??
+        //FIXME Tag based palette approach below not giving consistent colors as we scroll as recycler view recycles view holders on scroll. Need help on how to handle this.
+        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors needs to be chosen (first vibrant then dark muted etc)??
+        //FIXME For some images muted will work and for some vibrant works and how to decide dynamically which suits bests????
         //setDescriptionBackground(key, bitmap);
     }
 
@@ -241,9 +244,12 @@ public class ArticleListActivity extends AppCompatActivity implements
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
+        int spaceItemDecorationValue = getResources().getInteger(R.integer.space_item_decoration);
         StaggeredGridLayoutManager sglm =
             new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(sglm);
+        SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration(spaceItemDecorationValue);
+        mRecyclerView.addItemDecoration(spaceItemDecoration);
     }
 
     @Override
