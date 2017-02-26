@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -26,8 +28,15 @@ public class ImageLoaderHelper {
     private ImageLoaderHelper.Callbacks callbacks;
 
     public ImageLoaderHelper requestFrom(Activity activity) {
-        if (activity instanceof ArticleDetailActivity || activity instanceof ArticleListActivity) {
+        if (activity instanceof ImageLoaderHelper.Callbacks) {
             callbacks = (ImageLoaderHelper.Callbacks) activity;
+        }
+        return sInstance;
+    }
+
+    public ImageLoaderHelper requestFrom(RecyclerView.ViewHolder view) {
+        if (view instanceof ImageLoaderHelper.Callbacks) {
+            callbacks = (ImageLoaderHelper.Callbacks) view;
         }
         return sInstance;
     }

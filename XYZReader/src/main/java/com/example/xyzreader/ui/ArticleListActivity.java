@@ -11,12 +11,16 @@ import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v13.view.ViewCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -38,6 +42,8 @@ import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
 import com.example.xyzreader.widgets.ScaledImageView;
 import com.example.xyzreader.widgets.SpaceItemDecoration;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +55,7 @@ import java.util.Map;
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-    LoaderManager.LoaderCallbacks<Cursor>, ImageLoaderHelper.Callbacks {
+    LoaderManager.LoaderCallbacks<Cursor> {
 
     private CoordinatorLayout mCoordinatorLayout;
     private Typeface roboto_regular;
@@ -198,47 +204,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onAddedToCache(String key, Bitmap bitmap) {
-        //FIXME Tag based palette approach below not giving consistent colors as we scroll as recycler view recycles view holders on scroll. Need help on how to handle this.
-        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors needs to be chosen (first vibrant then dark muted etc)??
-        //FIXME For some images muted will work and for some vibrant works and how to decide dynamically which suits bests????
-        //setDescriptionBackground(key, bitmap);
-    }
-
-    @Override
-    public void onGetFromCache(String key, Bitmap bitmap) {
-        //FIXME Tag based palette approach below not giving consistent colors as we scroll as recycler view recycles view holders on scroll. Need help on how to handle this.
-        //FIXME Also need help choosing the right swatch so that it matches the image appropriately. Is there an order in which the colors needs to be chosen (first vibrant then dark muted etc)??
-        //FIXME For some images muted will work and for some vibrant works and how to decide dynamically which suits bests????
-        //setDescriptionBackground(key, bitmap);
-    }
-
-    private void setDescriptionBackground(String key, Bitmap bitmap) {
-        if (bitmap != null) {
-            Palette palette = Palette.from(bitmap).generate();
-            int defaultColor = 0xFF333333;
-            int palettecolor = palette.getDominantColor(defaultColor);
-
-            if (palettecolor == defaultColor) {
-                palettecolor = palette.getDarkMutedColor(defaultColor);
-            }
-
-            //try muted color
-            if(palettecolor == defaultColor){
-                palettecolor = palette.getLightMutedColor(defaultColor);
-            }
-
-            if (palettecolor == defaultColor) {
-                palettecolor = palette.getVibrantColor(defaultColor);
-            }
-
-            if (mRecyclerView.findViewWithTag(ArticleUtility.getDescriptionTagCardKey(key)) != null) {
-                mRecyclerView.findViewWithTag(ArticleUtility.getDescriptionTagCardKey(key)).setBackgroundColor(palettecolor);
-            }
-        }
-    }
-
-    @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Adapter adapter = new Adapter(cursor);
         adapter.setHasStableIds(true);
@@ -322,16 +287,42 @@ public class ArticleListActivity extends AppCompatActivity implements
 
             String url = cursor.getString(ArticleLoader.Query.THUMB_URL);
 
-            description.setTag(ArticleUtility.getDescriptionTagCardKeyFromUrl(url));
-            titleView.setTag(ArticleUtility.getTitleTagKeyFromUrl(url));
-            subtitleView.setTag(ArticleUtility.getSubTitleTagKeyFromUrl(url));
+            Picasso.with(thumbnailView.getContext()).load(url).fetch();
+            Picasso.with(thumbnailView.getContext())
+                .load(url)
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        thumbnailView.setImageBitmap(bitmap);
+                        //FIXME Since recyclerview destroys view holder and recreates while scrolling and since picasso is running on background thread, the pallete colors are not set to the corresponding image positions.
+                        //FIXME Not sure how to achieve this synchronization. So you see change in colors for each card or colors which doesnt match the card.
+                        //updatePalette(bitmap);
+                    }
 
-            thumbnailView.setImageUrl(
-                url,
-                ImageLoaderHelper.getInstance(ArticleListActivity.this).requestFrom(ArticleListActivity.this).getImageLoader());
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    }
+                });
 
             thumbnailView.setAspectRatio(cursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
             mPosition = position;
+        }
+
+        private void updatePalette(Bitmap bitmap) {
+            Palette palette = Palette.from(bitmap).generate();
+            Palette.Swatch vibrant = palette.getVibrantSwatch();
+            if (vibrant != null) {
+                // Set the background color of a layout based on the vibrant color
+                description.setBackgroundColor(vibrant.getRgb());
+
+                // Update the title TextView with the proper text color
+                titleView.setTextColor(vibrant.getTitleTextColor());
+                subtitleView.setTextColor(vibrant.getTitleTextColor());
+            }
         }
 
         @Override

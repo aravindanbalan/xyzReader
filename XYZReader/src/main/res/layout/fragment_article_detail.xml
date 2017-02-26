@@ -1,3 +1,5 @@
+<!--View pager in the activity requires a Nested Scrollview as root and not a Coordinator layout. Not sure why. Also one more reason below,
+prevents me from using coordinator layout as root-->
 <android.support.v4.widget.NestedScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,10 +19,12 @@
             app:cardElevation="2dp"
             app:cardPreventCornerOverlap="false">
 
+        <!--There is a limitation in Coordinator Layout which prevents me from using Cardview within Coordinator layout.
+        Floating action button needs to be a direct of Coordinatorlayout and also cannot be anchored to an sub-sub child (meta_bar) here.
+        If I move cardview inside, floating action button cant be anchored to metabar with this hierarchy Cardview->LinearLayout->MetaBar -->
         <android.support.design.widget.CoordinatorLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -52,7 +56,7 @@
                             style="?android:attr/textAppearanceSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="#8fff" />
+                            android:textColor="#8fff"/>
                 </LinearLayout>
 
                 <FrameLayout
@@ -86,8 +90,7 @@
                     app:layout_anchor="@id/meta_bar"
                     android:contentDescription="@string/action_share"
                     app:layout_anchorGravity="bottom|right"
-                    app:layout_behavior="com.example.xyzreader.widgets.FABAwareScrollingViewBehavior"
-                    app:pressedTranslationZ="12dp"/>
+                    app:pressedTranslationZ="6dp"/>
 
         </android.support.design.widget.CoordinatorLayout>
     </android.support.v7.widget.CardView>
