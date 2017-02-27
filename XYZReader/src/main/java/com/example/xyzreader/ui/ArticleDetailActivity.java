@@ -191,25 +191,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         collapseToolBar.setContentScrimColor(ContextCompat.getColor(this, android.R.color.transparent));
     }
 
-    //No longer needed
-    public void retryImageLoading() {
-        //retry
-        Log.i(TAG, "Retrying again to load image");
-        if (mSelectedImageUrl != null) {
-            ImageLoaderHelper.getInstance(ArticleDetailActivity.this).requestFrom(this).getImageLoader()
-                .get(mSelectedImageUrl, new ImageLoader.ImageListener() {
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                    }
-
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-
-                    }
-                });
-        }
-    }
-
     @Override
     public void onAddedToCache(String key, Bitmap bitmap) {
         if (ArticleUtility.getCacheKey(mSelectedImageUrl).equals(key)) {

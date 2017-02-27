@@ -35,6 +35,7 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -42,6 +43,8 @@ import com.example.xyzreader.data.UpdaterService;
 import com.example.xyzreader.utils.ArticleUtility;
 import com.example.xyzreader.widgets.ScaledImageView;
 import com.example.xyzreader.widgets.SpaceItemDecoration;
+import com.github.florent37.glidepalette.BitmapPalette;
+import com.github.florent37.glidepalette.GlidePalette;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -280,49 +283,22 @@ public class ArticleListActivity extends AppCompatActivity implements
                     + " by "
                     + cursor.getString(ArticleLoader.Query.AUTHOR));
             subtitleView.setTypeface(roboto_regular);
-
-            String transition_string = getString(R.string.transition_photo) + position;
-            thumbnailView.setTag(transition_string);
-            ViewCompat.setTransitionName(thumbnailView, transition_string);
-
             String url = cursor.getString(ArticleLoader.Query.THUMB_URL);
 
-            Picasso.with(thumbnailView.getContext()).load(url).fetch();
-            Picasso.with(thumbnailView.getContext())
-                .load(url)
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        thumbnailView.setImageBitmap(bitmap);
-                        //FIXME Since recyclerview destroys view holder and recreates while scrolling and since picasso is running on background thread, the pallete colors are not set to the corresponding image positions.
-                        //FIXME Not sure how to achieve this synchronization. So you see change in colors for each card or colors which doesnt match the card.
-                        //updatePalette(bitmap);
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    }
-                });
+            Glide.with(ArticleListActivity.this).load(url)
+                .listener(GlidePalette.with(url)
+                    .use(GlidePalette.Profile.VIBRANT)
+                    .intoBackground(description, GlidePalette.Swatch.RGB)
+                    .intoTextColor(titleView, GlidePalette.Swatch.TITLE_TEXT_COLOR)
+                    .intoTextColor(subtitleView, GlidePalette.Swatch.TITLE_TEXT_COLOR)
+                    .crossfade(true)
+                )
+                .into(thumbnailView);
 
             thumbnailView.setAspectRatio(cursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
+            String transition_string = getString(R.string.transition_photo) + position;
+            ViewCompat.setTransitionName(thumbnailView, transition_string);
             mPosition = position;
-        }
-
-        private void updatePalette(Bitmap bitmap) {
-            Palette palette = Palette.from(bitmap).generate();
-            Palette.Swatch vibrant = palette.getVibrantSwatch();
-            if (vibrant != null) {
-                // Set the background color of a layout based on the vibrant color
-                description.setBackgroundColor(vibrant.getRgb());
-
-                // Update the title TextView with the proper text color
-                titleView.setTextColor(vibrant.getTitleTextColor());
-                subtitleView.setTextColor(vibrant.getTitleTextColor());
-            }
         }
 
         @Override
